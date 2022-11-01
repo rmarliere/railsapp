@@ -69,7 +69,7 @@ jobs:
           write-mode: overwrite
 
       - name: 🔄 Rollout restart
-        uses: JoaoVagner/kubectl@1.0.0
+        uses: rmarliere/kubectl@1.0.0
         env:
           kube_confg_data: ${{ secrets.KUBECONFIG }}
           kube_namespace: default
@@ -80,7 +80,7 @@ jobs:
           args: '"kubectl apply -f manifests/deployment.yml"'
       
       - name: ✅ verify deployment
-        uses: JoaoVagner/kubectl@1.0.0
+        uses: rmarliere/kubectl@1.0.0
         env:
           kube_confg_data: ${{ secrets.KUBECONFIG }}
           kube_namespace: default
