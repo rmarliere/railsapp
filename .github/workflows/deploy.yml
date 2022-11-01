@@ -77,7 +77,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_KEY }}
           aws_region: "us-east-1"
         with:
-          args: '"kubectl apply -f k8s_staging.yml"'
+          args: '"kubectl apply -f manifests/deployment.yml"'
       
       - name: ✅ verify deployment
         uses: jonathan-sh/kubectl@1.0.0
