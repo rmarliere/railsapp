@@ -59,7 +59,7 @@ jobs:
         with:
           _input-file: 'manifests/deployment.yml'
           _format-key: '%%key%%'
-          image_container: ${{ steps.login-ecr.outputs.registry }}/railsapp:${{ steps.vars.outputs.sha_short }}
+          image: ${{ steps.login-ecr.outputs.registry }}/railsapp:${{ steps.vars.outputs.sha_short }}
 
       - uses: DamianReeves/write-file-action@v1.0
         name: 📓 Write manifests/deployment.yml
