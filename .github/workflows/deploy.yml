@@ -9,7 +9,7 @@ env:
   AWS_REGION: "us-east-1"
   KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
   KUBE_NAMESPACE: default
-  ECR_REPOSITORY: api
+  ECR_REPOSITORY: railsapp
   ENVIRONMENT: staging
 
 jobs:
