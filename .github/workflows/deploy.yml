@@ -2,7 +2,7 @@ name: Deploy Staging Environment
 on:
   push:
     branches:
-      - develop
+      - main
 
 env:
   RELEASE_REVISION: ${{ github.event.pull_request.head.sha }}
