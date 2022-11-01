@@ -48,7 +48,7 @@ jobs:
         id: build-push-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: railsapp
+          ECR_REPOSITORY: $ECR_REPOSITORY
           IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
         run: |
           docker build --build-arg ENVIRONMENT=${{ env.ENVIRONMENT }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -57,14 +57,14 @@ jobs:
         name: 🔎 Find and Replace
         id: sub
         with:
-          _input-file: 'k8s_staging.yml'
+          _input-file: 'manifests/deployment.yml'
           _format-key: '%%key%%'
           image_container: ${{ steps.login-ecr.outputs.registry }}/api:${{ steps.vars.outputs.sha_short }}
 
       - uses: DamianReeves/write-file-action@v1.0
-        name: 📓 Write k8s_staging.yml
+        name: 📓 Write manifests/deployment.yml
         with:
-          path: k8s_staging.yml
+          path: manifests/deployment.yml
           contents: ${{ steps.sub.outputs.result }}
           write-mode: overwrite
 
