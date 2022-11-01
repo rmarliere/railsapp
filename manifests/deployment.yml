@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: railsapp
+spec:
+  selector:
+    matchLabels:
+      app: railsapp
+  template:
+    metadata:
+      labels:
+        app: railsapp
+    spec:
+      containers:
+      - name: railsapp
+        image: <Image>
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: <Port>

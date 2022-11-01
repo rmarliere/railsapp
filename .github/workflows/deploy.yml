@@ -1,0 +1,91 @@
+name: Deploy Staging Environment
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  RELEASE_REVISION: ${{ github.event.pull_request.head.sha }}
+  AWS_REGION: "us-east-1"
+  KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG }}
+  KUBE_NAMESPACE: default
+  ECR_REPOSITORY: api
+  ENVIRONMENT: staging
+
+jobs:
+  build_v1:
+    name: Build Push and Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: ❌ Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.4.1
+        with:
+          access_token: ${{ github.token }}
+
+      - name: 🏗 Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: 🔐 Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: 📋 Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - name: Check outputs
+        run: echo ${{ steps.vars.outputs.sha_short }}
+
+      - name: 👤 Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: 🚀 Build, tag, and push image to Amazon ECR
+        id: build-push-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: api
+          IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
+        run: |
+          docker build --build-arg ENVIRONMENT=${{ env.ENVIRONMENT }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - uses: bluwy/substitute-string-action@v1
+        name: 🔎 Find and Replace
+        id: sub
+        with:
+          _input-file: 'k8s_staging.yml'
+          _format-key: '%%key%%'
+          image_container: ${{ steps.login-ecr.outputs.registry }}/api:${{ steps.vars.outputs.sha_short }}
+
+      - uses: DamianReeves/write-file-action@v1.0
+        name: 📓 Write k8s_staging.yml
+        with:
+          path: k8s_staging.yml
+          contents: ${{ steps.sub.outputs.result }}
+          write-mode: overwrite
+
+      - name: 🔄 Rollout restart
+        uses: jonathan-sh/kubectl@1.0.0
+        env:
+          kube_confg_data: ${{ secrets.KUBECONFIG }}
+          kube_namespace: default
+          aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_KEY }}
+          aws_region: "us-east-1"
+        with:
+          args: '"kubectl apply -f k8s_staging.yml"'
+      
+      - name: ✅ verify deployment
+        uses: jonathan-sh/kubectl@1.0.0
+        env:
+          kube_confg_data: ${{ secrets.KUBECONFIG }}
+          kube_namespace: default
+          aws_access_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_KEY }}
+          aws_region: "us-east-1"
+        with:
+          args: '"kubectl rollout status deployment/glucogear-api"'
