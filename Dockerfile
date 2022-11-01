@@ -2,8 +2,9 @@
 FROM ruby:2.6
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
 WORKDIR /railsapp
-COPY Gemfile /railsapp/Gemfile
-COPY Gemfile.lock /railsapp/Gemfile.lock
+COPY . /railsapp
+#COPY Gemfile /railsapp/Gemfile
+#COPY Gemfile.lock /railsapp/Gemfile.lock
 RUN bundle install
 
 # Add a script to be executed every time the container starts.
