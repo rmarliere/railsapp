@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: railsapp
-        image: 780171452443.dkr.ecr.us-east-1.amazonaws.com/railsapp:5e1f988
+        image: '%%image%%'
         resources:
           limits:
             memory: "128Mi"
