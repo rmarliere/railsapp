@@ -51,7 +51,7 @@ jobs:
           ECR_REPOSITORY: railsapp
           IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
         run: |
-          docker-compose up  -d build --build-arg ENVIRONMENT=${{ env.ENVIRONMENT }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker-compose up -d --build-arg ENVIRONMENT=${{ env.ENVIRONMENT }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - uses: bluwy/substitute-string-action@v1
         name: 🔎 Find and Replace

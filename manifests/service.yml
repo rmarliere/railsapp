@@ -5,6 +5,7 @@ metadata:
 spec:
   selector:
     app: railsapp
+  type: LoadBalancer
   ports:
-  - port: <Port>
-    targetPort: <Target Port>
+  - port: 3000
+    targetPort: 3000
