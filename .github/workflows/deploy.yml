@@ -52,7 +52,7 @@ jobs:
           IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
         run: |
           docker build --build-arg ENVIRONMENT=${{ env.ENVIRONMENT }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker compose up
+          docker compose up -d
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       - uses: bluwy/substitute-string-action@v1
         name: 🔎 Find and Replace
