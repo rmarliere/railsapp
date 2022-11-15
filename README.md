@@ -1,24 +1,10 @@
 # README
+#### **1. Update repo secret actions**
+<br>
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+#### **2. Get KUBECONFIG base64**
+<br>
 
-Things you may want to cover:
+    cat $HOME/.kube/config | base64 | pbcopy
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+#### **3. Run Actions**
