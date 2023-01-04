@@ -7,4 +7,4 @@
 
     cat $HOME/.kube/config | base64 | pbcopy
 
-#### **3. Run Actions**
+#### **3. Run Actions** 
